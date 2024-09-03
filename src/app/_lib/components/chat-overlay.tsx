@@ -13,7 +13,7 @@ interface ChatOverlayProps {
 const ChatOverlay: React.FC<ChatOverlayProps> = ({ messages, onSendMessage, onClose, senderName }) => {
     const [message, setMessage] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
     const chatRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({ messages, onSendMessage, onCl
         if (message.trim() || selectedFile) {
             onSendMessage(message, selectedFile);
             setMessage('');
-            setSelectedFile(null);
+            setSelectedFile(undefined);
         }
     };
 
@@ -36,10 +36,8 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({ messages, onSendMessage, onCl
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files ? event.target.files[0] : null;
-        if (file) {
-            setSelectedFile(file);
-        }
+        const file = event.target.files ? event.target.files[0] : undefined;
+        setSelectedFile(file);
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -64,9 +62,7 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({ messages, onSendMessage, onCl
 
                 <Box
                     ref={chatRef}
-                    flex="1"
-                    overflowY="auto"
-                    style={{ maxHeight: 'calc(100% - 90px)' }}
+                    style={{ flex: '1', overflowY: 'auto', maxHeight: 'calc(100% - 90px)' }}
                 >
                     {messages.map((msg, index) => (
                         <Box key={index} mb="2">
@@ -106,15 +102,13 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({ messages, onSendMessage, onCl
                             style={{ flex: '1', paddingLeft: '40px', resize: 'none', overflowY: 'auto', color: 'white', backgroundColor: '#444', borderRadius: '10px', fontSize: '18px', lineHeight: '1.5' }}
                             onKeyDown={handleKeyDown}
                         />
-                        <Button variant="ghost" color="red" onClick={onClose}>
-                            <Icon icon="mdi:close" width={24} height={24} />
+                        <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="file-upload" />
+                        <label htmlFor="file-upload">
+                            <Icon icon="mdi:paperclip" width={24} height={24} style={{ cursor: 'pointer', marginLeft: '10px' }} />
+                        </label>
+                        <Button variant="ghost" color="red" onClick={handleSendMessage}>
+                            <Icon icon="mdi:send" width={24} height={24} />
                         </Button>
-                        {/* <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="fileInput" />
-                        <label htmlFor="fileInput">
-                            <Button variant="outline" style={{ marginLeft: '8px' }}>
-                                <Icon icon="mdi:attach-file" width={24} height={24} />
-                            </Button>
-                        </label> */}
                     </Flex>
                 </Flex>
             </Flex>

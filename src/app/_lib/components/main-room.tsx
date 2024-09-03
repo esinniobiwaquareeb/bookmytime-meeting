@@ -232,18 +232,19 @@ const MainRoom: FC<IProps> = () => {
         video: true
       });
       setScreenStream(stream);
-
+  
       if (screenVideoRef.current) {
         screenVideoRef.current.srcObject = stream;
       }
-
+  
       // Notify peers about screen sharing
       if (peerInstance.current) {
-        Object.values(peerInstance.current.connections).forEach((connections: any[]) => {
+        Object.values(peerInstance.current.connections).forEach((value) => {
+          const connections = value as any[]; // Type assertion
           connections.forEach((conn: any) => {
             // Get the peer connection
             const peerConnection = conn.peerConnection;
-
+  
             // Add the screen sharing stream to the peer connection
             peerConnection.addStream(stream);
           });
@@ -253,6 +254,7 @@ const MainRoom: FC<IProps> = () => {
       console.error('Error starting screen sharing:', error);
     }
   }
+  
 
   const [showChatOverlay, setShowChatOverlay] = useState(false);
 
